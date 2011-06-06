@@ -1,4 +1,9 @@
 
+/* For best printing results, export these to .stl files one at a time. */
+print_pin = 1;
+print_handle = 1;
+print_crank = 1;
+
 winder_width=21;
 winder_height=8;
 winder_depth=15;
@@ -26,12 +31,31 @@ module winder_crank(x, y, z)
 {
 	translate(v = [x, y, z]) {
 		difference() {
-			cube(size = [ crank_length,
-				crank_width, crank_height ],
-				center = true);
-			translate(v = [20, 0, -10])
-			cylinder(h = 35, r1 = handle_radius,
+			union() {
+				cube(size = [ crank_length,
+					crank_width, crank_height ],
+					center = true);
+				translate(v = [20 + crank_width / 2, 0, -crank_height / 2])
+					cylinder(h = crank_height, r1 = handle_radius2,
+						r2 = handle_radius2, center = false);
+			}
+			translate(v = [20 + crank_width / 2, 0, -10])
+				cylinder(h = 35, r1 = handle_radius,
+					r2 = handle_radius, center = false);
+		}
+	}
+}
+
+module pin(x, y, z)
+{
+	translate( v = [x, y, z]) {
+		union() {
+			cylinder(h = handle_length / 5,
+				r1 = handle_radius,
 				r2 = handle_radius, center = false);
+			cylinder(h = handle_length / 20,
+				r1 = handle_radius2, 
+				r2 = handle_radius2, center = false);
 		}
 	}
 }
@@ -39,11 +63,13 @@ module winder_crank(x, y, z)
 module handle(x, y, z)
 {
 	translate( v = [x, y, z]) {
-		union() {
-			cylinder(h = handle_length, r1 = handle_radius,
-				r2 = handle_radius, center = false);
-			cylinder(h = handle_length - 5, r1 = handle_radius2,
+		difference() {
+			cylinder(h = handle_length, r1 = handle_radius2,
 				r2 = handle_radius2, center = false);
+			translate( v = [ 0, 0, 5 ])
+				cylinder(h = handle_length - 5,
+					r1 = handle_radius,
+					r2 = handle_radius, center = false);
 		}
 	}
 }
@@ -53,10 +79,15 @@ module string_winder(x, y, z)
 {
 	translate( v = [x, y, z]) {
 		union() {
-			winder_crank( crank_length / 2, 0, - winder_depth / 2 + 0.5);
-			winder_head();
-			handle(crank_length + 10, 0, 1.0 - 10);
+			if (print_crank != 0) {
+				winder_crank( crank_length / 2, 0, - winder_depth / 2 + 0.5);
+				winder_head();
+			}
 		}
+		if (print_handle != 0)
+			handle(crank_length + 15, 0, -9);
+		if (print_pin != 0)
+			pin(-20, 0, -9);
 	}
 }
 
