@@ -27,8 +27,8 @@ winder_width=21;
 winder_height=8;
 winder_depth=15;
 
-handle_radius=4;
-handle_radius2=6;
+handle_radius=5;
+handle_radius2=9;
 handle_length=75;
 crank_length=(150 / 3);
 crank_height=4;
@@ -69,9 +69,9 @@ module pin(x, y, z)
 {
 	translate( v = [x, y, z]) {
 		union() {
-			cylinder(h = handle_length / 5,
-				r1 = handle_radius,
-				r2 = handle_radius, center = false);
+			cylinder(h = handle_length / 2,
+				r1 = handle_radius - 0.5 ,
+				r2 = handle_radius - 0.5, center = false);
 			cylinder(h = handle_length / 20,
 				r1 = handle_radius2, 
 				r2 = handle_radius2, center = false);
@@ -104,9 +104,9 @@ module string_winder(x, y, z)
 			}
 		}
 		if (print_handle != 0)
-			handle(crank_length + 15, 0, -9);
+			handle(crank_length + 25, 0, -9);
 		if (print_pin != 0)
-			pin(-20, 0, -9);
+			pin(-25, 0, -9);
 	}
 }
 
